@@ -1,30 +1,48 @@
 package people.spheres.emailgenerator.model;
 
+import java.util.List;
+
 public class EmailResponse {
-    private String id;
-    private String value;
+    private List<EmailEntry> data;
 
-    public EmailResponse() {}
-
-    public EmailResponse(String value) {
-        this.id = value;
-        this.value = value;
+    public EmailResponse(List<EmailEntry> data) {
+        this.data = data;
     }
 
-    public String getId() {
-        return id;
+    public List<EmailEntry> getData() {
+        return data;
     }
 
-    public String getValue() {
-        return value;
+    public void setData(List<EmailEntry> data) {
+        this.data = data;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public static class EmailEntry {
+        private String id;
+        private String value;
 
-    public void setValue(String value) {
-        this.value = value;
+        public EmailEntry() {
+        }
+
+        public EmailEntry(String id, String value) {
+            this.id = id;
+            this.value = value;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 }
-
