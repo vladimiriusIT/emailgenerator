@@ -1,19 +1,25 @@
 package people.spheres.emailgenerator.controller;
 
 import org.springframework.web.bind.annotation.*;
+import people.spheres.emailgenerator.entity.EmailTemplate;
 import people.spheres.emailgenerator.model.EmailResponse;
-import people.spheres.emailgenerator.service.EmailExpressionService;
+import people.spheres.emailgenerator.repository.EmailTemplateRepository;
+import people.spheres.emailgenerator.service.EmailGenerationService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/generate-email")
+@RequestMapping("/api/email")
 public class EmailGeneratorController {
 
-    private final EmailExpressionService emailExpressionService;
+    private final EmailGenerationService emailGenerationService;
+    private final EmailTemplateRepository emailTemplateRepository;
 
-    public EmailGeneratorController(EmailExpressionService emailExpressionService) {
-        this.emailExpressionService = emailExpressionService;
+    public EmailGeneratorController(EmailGenerationService emailGenerationService,
+                                    EmailTemplateRepository emailTemplateRepository) {
+        this.emailGenerationService = emailGenerationService;
+        this.emailTemplateRepository = emailTemplateRepository;
     }
 
     @GetMapping("/")
@@ -22,19 +28,24 @@ public class EmailGeneratorController {
     }
 
     @GetMapping
-    public Map<String, List<EmailResponse>> generateEmail(
-            @RequestParam Map<String, String> params,
-            @RequestParam(name = "expression") String expression
-    ) {
-        // Filter out all inputN parameters
-        Map<String, String> inputs = new TreeMap<>();
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            if (entry.getKey().startsWith("input")) {
-                inputs.put(entry.getKey(), entry.getValue());
-            }
+    public EmailResponse generateEmails(@RequestParam Map<String, String> flatParams) {
+        String expression = flatParams.get("expression");
+        if (expression == null) {
+            throw new IllegalArgumentException("Missing required 'expression' parameter");
         }
 
-        List<EmailResponse> responses = emailExpressionService.evaluateExpression(inputs, expression);
-        return Map.of("data", responses);
+        Map<String, List<String>> inputMap = flatParams.entrySet().stream()
+                .filter(e -> e.getKey().startsWith("input"))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> Arrays.asList(e.getValue().split(","))
+                ));
+
+        EmailTemplate template = new EmailTemplate();
+        template.setName("Ad-hoc Template");
+        template.setExpression(expression);
+        EmailTemplate savedTemplate = emailTemplateRepository.save(template);
+
+        return emailGenerationService.generateAndStore(expression, inputMap, savedTemplate);
     }
 }

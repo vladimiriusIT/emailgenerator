@@ -25,7 +25,7 @@ public class ExpressionEvaluator {
 
     private static String resolveToken(String token, Map<String, String> inputs) {
         if (STRING_LITERAL.matcher(token).matches()) {
-            return token.substring(1, token.length() - 1); // remove quotes
+            return token.substring(1, token.length() - 1);
         }
 
         if (token.startsWith("concat(") && token.endsWith(")")) {
@@ -63,7 +63,6 @@ public class ExpressionEvaluator {
                     value = value.length() >= len ? value.substring(value.length() - len) : value;
                 }
                 case "allChars" -> {
-                    // no-op
                 }
                 case "toLowerCase" -> value = value.toLowerCase();
                 case "toUpperCase" -> value = value.toUpperCase();
