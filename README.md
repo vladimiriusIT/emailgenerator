@@ -1,76 +1,151 @@
-Dynamic Email Generator Service
+# Dynamic Email Generator Service
 
 A flexible, secure RESTful service that generates custom email addresses using a proprietary expression language, secured APIs, and containerized deployment.
 
-Features Implemented (by Technical Challenge)
+---
 
-1. Custom Expression Language
+## Features Implemented (by Technical Challenge)
+
+### 1. Custom Expression Language
 
 Supports:
+- `inputN.firstChars(X)`, `lastChars(X)`, `allChars()`
+- `toLowerCase()`, `toUpperCase()`
+- `concat(...)` function and `~` operator
+- Dynamic input parameters (`input1`, `input2`, ..., `inputN`)
+- Generates all valid combinations (Cartesian product of inputs)
 
-inputN.firstChars(X), lastChars(X), allChars()
+---
 
-toLowerCase(), toUpperCase()
+### 2. Documentation
 
-concat(...) function and ~ operator
+- `README.md`: Full API, Docker, security and usage
+- `ExpressionSyntax.md`: DSL reference with examples
+- `setup.md`: Step-by-step setup guide (local & Docker)
+- Postman collection: `EmailGenerator.postman_collection.json`
+- `CHALLENGE.md`: Full technical task description
 
-Dynamic input parameters (input1, input2, ..., inputN)
+---
 
-Generates all valid combinations (Cartesian product of inputs)
+### 3. API Usage
 
-2. Documentation
+- Base URL (Docker): `https://localhost:9443/api`
+- Swagger UI (dev): `http://localhost:8080/swagger-ui.html`
+- Example:
+```apex
+GET /api/email?expression=concat(input1.firstChars(1),input2.lastChars(3),"@test.com")
+&input1=Anna,Ivan&input2=Petrova,Georgieva
+```
+---
 
-README.md: Full API, Docker, security and usage
+### 4. Testing
 
-ExpressionSyntax.md: DSL reference with examples
+- JUnit 5 unit + integration tests
+- Expression DSL coverage: 100%
+- Security + RBAC integration tests with H2
+- Run with `@ActiveProfiles("test")`
 
-setup.md: Step-by-step setup guide
+---
 
-Postman collection included for testing
+### 5. Persistence
 
-4. Testing
+- Relational DB: PostgreSQL (in Docker) or in-memory H2 (for tests/dev)
+- Entities:
+- `EmailTemplate`: stores expression + name
+- `GeneratedEmail`: stores generated email linked to a template
+- `AppUser`: user accounts with roles
+- Spring Data Repositories and `@Transactional` services
+- Seeded test data (via dev/docker profile)
 
-Unit and integration tests with JUnit 5
+---
 
-Edge cases, expression DSL, repository + controller coverage
+### 6. Security
 
-Spring Security integration tests with RBAC
+- Spring Security with Basic Auth
+- Users (defined in DB):
+- **Admin**: `admin / admin123`
+- **User**: `user / user123`
+- Role-Based Access Control:
+- `/api/templates` - Admin-only
+- `/api/email`, `/api/emails` - Accessible to authenticated users
 
-5. Persistence
+---
 
-PostgreSQL (or H2 for tests/dev)
+### 7. Docker + NGINX + HTTPS
 
-JPA entities: EmailTemplate, GeneratedEmail, AppUser
+- `docker-compose.yml` runs two services:
+- `app`: Spring Boot app with Temurin 17
+- `nginx`: serves HTTPS (port 9443)
+- NGINX:
+- Self-signed cert auto-generated if not found
+- Redirects HTTP (80) → HTTPS (443)
+- Docker volumes:
+- NGINX config, certs mounted from `./nginx/`
 
-Spring Data Repositories + @Transactional service layer
+Access API via: `https://localhost:9443/api`
 
-Initial seed data in dev/docker profiles
+---
 
-6. Security
+### 8. Git Best Practices
 
-Basic Authentication (admin/admin123, user/user123)
+- Public GitHub repository
+- Branch naming: `feature/`, `fix/`
+- Commits follow conventions
+- `.gitignore` included
 
-Role-based authorization (RBAC)
+## Database Setup
 
-Endpoint protection per role
+| Profile     | DB         | Location              |
+|-------------|------------|------------------------|
+| `dev`       | H2         | In-memory              |
+| `test`      | H2         | In-memory (tests)      |
+| `docker`    | PostgreSQL | Docker service         |
+| `prod`      | PostgreSQL | Custom URL/config      |
 
-7. Docker + NGINX + HTTPS
+Docker profile uses:
+- `emailgen-db:5432`
+- `DB_USER`: `emailgen`
+- `DB_PASSWORD`: `secret`
+- Automatically initialized with schema + sample data
 
-docker-compose.yml with:
+---
 
-eclipse-temurin:17 for Spring Boot
+## How to Run
 
-nginx:latest with HTTPS on 9443
+### Locally (dev mode)
 
-Self-signed cert auto-generated on first build
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+```
+With Docker
+bash
+```
+docker-compose up --build
+```
+Access at:
 
-HTTP to HTTPS redirect
+Swagger UI: https://localhost:9443/swagger-ui.html
 
-8. Git Best Practices
+Postman Collection
+Use the included file:
 
-GitHub repo with:
+pgsql
 
-Meaningful branch names (feature/)
+```
+EmailGenerator.postman_collection.json
+```
+Includes example requests (GET/POST)
 
-Structured commits, .gitignore
+Requires Basic Auth (user/user123)
 
+Covers all endpoints
+
+Reference
+
+[CHALLENGE](CHALLENGE.md) – full technical assignment
+
+[EmailGenerator-Postman Collection](EmailGenerator.postman_collection.json) – custom DSL functions
+
+[setup](setup.md) – detailed local & Docker setup
+
+© 2025 Dynamic Email Generator by Vladimir Stratiev
