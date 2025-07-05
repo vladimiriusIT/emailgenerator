@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "Email Generator API",
+    "description": "Postman Collection for testing the Email Generator Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b11f8d3f-efee-4b38-bbfc-ae070cce9876"
+  },
+  "item": [
+    {
+      "name": "GET - Generate Email via Expression (Query)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Basic dXNlcjp1c2VyMTIz",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/email?expression=concat(input1.firstChars(1),input2.lastChars(3),\"@mail.com\")&input1=Anna&input2=Ivanova",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "email"],
+          "query": [
+            {
+              "key": "expression",
+              "value": "concat(input1.firstChars(1),input2.lastChars(3),\"@mail.com\")"
+            },
+            {
+              "key": "input1",
+              "value": "Anna"
+            },
+            {
+              "key": "input2",
+              "value": "Ivanova"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "POST - Generate Email from Template",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Basic dXNlcjp1c2VyMTIz",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"templateId\": \"REPLACE_ME\",\n  \"inputs\": {\n    \"input1\": \"Anna\",\n    \"input2\": \"Ivanova\"\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/email",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "email"]
+        }
+      }
+    },
+    {
+      "name": "GET - All Templates",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Basic dXNlcjp1c2VyMTIz",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/templates",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "templates"]
+        }
+      }
+    },
+    {
+      "name": "POST - Create Template (Admin only)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Basic YWRtaW46YWRtaW4xMjM=",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"ShortForm\",\n  \"expression\": \"input1.firstChars(1)~\\\".\\\"~input2.lastChars(3)~\\\"@demo.com\\\"\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/templates",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "templates"]
+        }
+      }
+    },
+    {
+      "name": "GET - All Generated Emails",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Basic dXNlcjp1c2VyMTIz",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/emails",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "emails"]
+        }
+      }
+    }
+  ]
+}
