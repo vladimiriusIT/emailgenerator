@@ -15,15 +15,15 @@ public class EmailGenerationService {
 
     private final GeneratedEmailRepository generatedEmailRepository;
     private final EmailExpressionService expressionService;
-
     private final GeneratedEmailService generatedEmailService;
 
     @Autowired
     public EmailGenerationService(GeneratedEmailRepository generatedEmailRepository,
-                                  EmailExpressionService expressionService, GeneratedEmailService generatedEmailService) {
+                                  EmailExpressionService expressionService,
+                                  GeneratedEmailService generatedEmailService) {
         this.generatedEmailRepository = generatedEmailRepository;
         this.expressionService = expressionService;
-        this.generatedEmailService =generatedEmailService;
+        this.generatedEmailService = generatedEmailService;
     }
 
     public EmailResponse generate(String expression, Map<String, List<String>> multiInputs) {
@@ -46,14 +46,14 @@ public class EmailGenerationService {
         for (Map<String, String> combo : allCombinations) {
             String result = expressionService.evaluateExpression(combo, expression).get(0).getValue();
             emails.add(new EmailResponse.EmailEntry(result, result));
-
-            GeneratedEmail email = new GeneratedEmail();
-            email.setEmail(result);
-            email.setTemplate(template);
             generatedEmailService.saveIfNotExists(result, template);
         }
 
         return new EmailResponse(emails);
+    }
+
+    public List<GeneratedEmail> getAllGenerated() {
+        return generatedEmailRepository.findAll();
     }
 
     private List<Map<String, String>> computeCombinations(Map<String, List<String>> inputMap) {
@@ -76,3 +76,4 @@ public class EmailGenerationService {
         }
     }
 }
+

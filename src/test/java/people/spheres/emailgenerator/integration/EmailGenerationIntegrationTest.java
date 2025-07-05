@@ -1,4 +1,4 @@
-package people.spheres.emailgenerator;
+package people.spheres.emailgenerator.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

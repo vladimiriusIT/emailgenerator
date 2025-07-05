@@ -1,5 +1,6 @@
 package people.spheres.emailgenerator.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,10 +15,12 @@ public class GeneratedEmail {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(name = "generated_at")
     private LocalDateTime generatedAt;
 
     @ManyToOne
     @JoinColumn(name = "template_id")
+    @JsonIgnore
     private EmailTemplate template;
 
 
