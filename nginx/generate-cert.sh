@@ -1,5 +1,3 @@
-#!/bin/bash
-
 mkdir -p nginx/certs
 
 openssl req -x509 -nodes -days 365 \
